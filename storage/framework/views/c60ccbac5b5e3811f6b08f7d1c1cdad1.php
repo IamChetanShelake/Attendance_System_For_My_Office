@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>HR Admin Panel - Attendance Employee Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -123,8 +124,16 @@
         .sidebar-nav {
             padding: 2rem 0 1rem 0;
             height: calc(100vh - 140px);
-            overflow-y: auto;
+            overflow-y: scroll; /* Keep scrolling enabled */
             overflow-x: hidden;
+
+            /* Hide scrollbar - cross-browser */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
         }
 
         .sidebar-footer {
@@ -476,37 +485,85 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.employees' ? 'active' : ''); ?>" href="<?php echo e(route('admin.employees')); ?>">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.employees.index' ? 'active' : ''); ?>" href="<?php echo e(route('admin.employees.index')); ?>">
                         <i class="fas fa-users"></i>
                         <span class="nav-text">Employees</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.attendance' ? 'active' : ''); ?>" href="<?php echo e(route('admin.attendance')); ?>">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.employee-logins') ? 'active' : ''); ?>" href="<?php echo e(route('admin.employee-logins.index')); ?>">
+                        <i class="fas fa-user-shield"></i>
+                        <span class="nav-text">Employee Login</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.daily-attendance' ? 'active' : ''); ?>" href="<?php echo e(route('admin.daily-attendance')); ?>">
                         <i class="fas fa-clock"></i>
-                        <span class="nav-text">Attendance</span>
+                        <span class="nav-text">Daily Attendance</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.rules' ? 'active' : ''); ?>" href="<?php echo e(route('admin.rules')); ?>">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.manage-attendance' ? 'active' : ''); ?>" href="<?php echo e(route('admin.manage-attendance')); ?>">
+                        <i class="fas fa-calendar-check"></i>
+                        <span class="nav-text">Attendance Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.manual-attendance' ? 'active' : ''); ?>" href="<?php echo e(route('admin.manual-attendance')); ?>">
+                        <i class="fas fa-hand-paper"></i>
+                        <span class="nav-text">Manual Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.accountability') ? 'active' : ''); ?>" href="<?php echo e(route('admin.accountability.index')); ?>">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span class="nav-text">Salary/Accountability</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.documents') ? 'active' : ''); ?>" href="<?php echo e(route('admin.documents.index')); ?>">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="nav-text">Documents</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.office-rules') ? 'active' : ''); ?>" href="<?php echo e(route('admin.office-rules.index')); ?>">
                         <i class="fas fa-cogs"></i>
-                        <span class="nav-text">Rules</span>
+                        <span class="nav-text">Office Rules</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.leave' ? 'active' : ''); ?>" href="<?php echo e(route('admin.leave')); ?>">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.employee-leave') ? 'active' : ''); ?>" href="<?php echo e(route('admin.employee-leave.index')); ?>">
                         <i class="fas fa-calendar-times"></i>
-                        <span class="nav-text">Leave</span>
+                        <span class="nav-text">Leave Management</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.holidays' ? 'active' : ''); ?>" href="<?php echo e(route('admin.holidays')); ?>">
+                    <a class="nav-link <?php echo e(str_starts_with(Route::currentRouteName(), 'admin.academic-calendar') ? 'active' : ''); ?>" href="<?php echo e(route('admin.academic-calendar.index')); ?>">
                         <i class="fas fa-calendar-alt"></i>
-                        <span class="nav-text">Holidays</span>
+                        <span class="nav-text">Academic Calendar</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="logout()">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.report-management' ? 'active' : ''); ?>" href="<?php echo e(route('admin.report-management')); ?>">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.employee-accessories' ? 'active' : ''); ?>" href="<?php echo e(route('admin.employee-accessories')); ?>">
+                        <i class="fas fa-tools"></i>
+                        <span class="nav-text">Accessories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(Route::currentRouteName() == 'admin.ceo-login' ? 'active' : ''); ?>" href="<?php echo e(route('admin.ceo-login')); ?>">
+                        <i class="fas fa-user-tie"></i>
+                        <span class="nav-text">CEO Login</span>
+                    </a>
+                </li>
+                <li class="nav-item" style="padding-bottom: 40px;">
+                    <a class="nav-link" href="#" onclick="logout()" >
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="nav-text">Logout</span>
                     </a>
